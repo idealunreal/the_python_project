@@ -1,9 +1,10 @@
 # main.py
-from doctest import debug
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from pathlib import Path
 from pydantic import BaseModel
-
 app = FastAPI()
+TEMPLATE_PATH = Path(__file__).parent / "templates" / "index.html"
 
 
 class Item(BaseModel):
@@ -11,9 +12,10 @@ class Item(BaseModel):
     price: float
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def read_root():
-    return {"msg": "hello fastapi"}
+    html = TEMPLATE_PATH.read_text(encoding="utf-8")
+    return HTMLResponse(content=html)
 
 
 @app.post("/items")
