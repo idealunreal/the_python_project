@@ -1,0 +1,21 @@
+# Python cache and environment files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Local environment variables
+.env
+
+# Uvicorn reload file
+*.reload
+
+# Editor temporary files
+*.swp
+*.swo
+.DS_Store
