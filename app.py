@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from pathlib import Path
 from pydantic import BaseModel
+
 app = FastAPI()
 TEMPLATE_PATH = Path(__file__).parent / "templates" / "index.html"
 
@@ -31,4 +32,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
