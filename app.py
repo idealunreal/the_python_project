@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from pathlib import Path
 from pydantic import BaseModel
+from function import calculate
 
 app = FastAPI()
 TEMPLATE_PATH = Path(__file__).parent / "templates" / "index.html"
@@ -22,6 +23,15 @@ def read_root():
 @app.post("/items")
 def create_item(item: Item):
     return {"msg": "created", "item": item}
+
+
+@app.get("/calculate")
+def perform_calculation(a: float, b: float, operation: str):
+    try:
+        result = calculate(a, b, operation)
+        return {"result": result}
+    except ValueError as e:
+        return {"error": str(e)}
 
 
 def main() -> None:
