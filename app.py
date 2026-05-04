@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from pathlib import Path
 from pydantic import BaseModel
 from function import calculate
+from archive import archive_operation
 
 app = FastAPI()
 TEMPLATE_PATH = Path(__file__).parent / "templates" / "index.html"
@@ -29,6 +30,7 @@ def create_item(item: Item):
 def perform_calculation(a: float, b: float, operation: str):
     try:
         result = calculate(a, b, operation)
+        archive_operation(a, b, operation, result)
         return {"result": result}
     except ValueError as e:
         return {"error": str(e)}
