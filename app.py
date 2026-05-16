@@ -1,46 +1,45 @@
-# main.py
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import uvicorn
 from pathlib import Path
-from pydantic import BaseModel
-from function import calculate
-from archive import archive_operation
 
-app = FastAPI()
-TEMPLATE_PATH = Path(__file__).parent / "templates" / "index.html"
+app = FastAPI(title="Minimal Blog")
 
 
-class Item(BaseModel):
-    name: str
-    price: float
+# 先定义 API 路由（必须在 mount 之前）
+@app.get("/api/posts")
+async def get_posts():
+    return [
+        {
+            "id": 1,
+            "title": "👋 Hello FastAPI",
+            "date": "2024-05-01",
+            "content": "这是我的第一篇博客，使用 FastAPI + 原生 JS 构建。",
+        },
+        {
+            "id": 2,
+            "title": "📚 Python 学习笔记",
+            "date": "2024-05-10",
+            "content": "Python 语法简洁优雅，配合异步编程非常适合现代 Web 开发。",
+        },
+        {
+            "id": 3,
+            "title": "⚡ 静态页面的动态感",
+            "date": "2024-05-15",
+            "content": "通过 Fetch API 请求后端 JSON，无需刷新页面即可渲染内容。",
+        },
+    ]
 
 
-@app.get("/", response_class=HTMLResponse)
-def read_root():
-    html = TEMPLATE_PATH.read_text(encoding="utf-8")
-    return HTMLResponse(content=html)
+# 根路径返回 index.html
+@app.get("/")
+async def root():
+    return FileResponse("static/index.html")
 
 
-@app.post("/items")
-def create_item(item: Item):
-    return {"msg": "created", "item": item}
-
-
-@app.get("/calculate")
-def perform_calculation(a: float, b: float, operation: str):
-    try:
-        result = calculate(a, b, operation)
-        archive_operation(a, b, operation, result)
-        return {"result": result}
-    except ValueError as e:
-        return {"error": str(e)}
-
-
-def main() -> None:
-    import uvicorn
-
-    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
-
+# 最后挂载静态文件目录
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 if __name__ == "__main__":
-    main()
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
